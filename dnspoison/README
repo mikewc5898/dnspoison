@@ -1,0 +1,59 @@
+README
+Author: Michael Coulter
+
+dnspoison.py
+
+Program which listens on a network, detects dns requests and spoofs a dns response to the requesting machine. This dns response connects the computer to an attacker's own server or any specified IP.
+Tested on Kali Linux 64x Virtual Machine running on 2019.1 update.
+
+Program runs in two modes.
+
+Usage: dnspoison.py [-i interface] [-f filename] expression
+
+-i interface specifies the interface to listen over for DNS responses
+
+-f filename reads through a file of pairs IP to domain names separated by single spaces. Each pair is written on a new line. If a request to a given website in the list is detected, a response is spoofed sending the victim to the listed IP.
+
+the optional expression serves as a filter using BPF syntax in order to filter packets from traffic.
+
+
+NOTICE
+=================================================================================
+
+Program uses netifaces to resolve ip of attacking machine as means to direct victim.
+
+from the Linux terminal type:
+
+pip install netifaces
+
+==================================================================================
+
+The program runs using Scapy's sniff function. Using prn= , each packet is passed to a function to disassemble DNS Reqests and create DNS Responses. There are two separate functions to speed up the program to work better on the fly. In the function, if a packet is a DNS packet, it is captured and each IP, UDP, and DNS sections of the packet are saved. The necessary fields are modified and the packet is reconstructed and sent out over the wire back to the victim.
+
+On the attacker's end we see:
+
+
+root@kali:~/Documents# sudo python dnspoison.py
+.
+Sent 1 packets.
+.
+Sent 1 packets.
+.
+Sent 1 packets.
+
+for each packet sent.
+
+The victim gets redirected to the designated IP, in our case, the webpage hosted on the attacker 
+
+
+This was tested with the attacker as our Kali machine and the victim as a VM running Ubuntu 16.0.4
+
+
+
+
+
+
+
+
+
+
